@@ -32,7 +32,6 @@ const dishSchema = new mongoose.Schema({
     },
     category:{
         type: String,
-        required: true,
         enum: ['veg', 'non-veg']
     },
     counter : {

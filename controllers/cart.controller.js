@@ -61,39 +61,66 @@ const addDishToCart = async (req, res) => {
 };
 
 
-const updateDishInCart = async (req, res) => {
+const updateItemQuantityInCart = async (req, res) => {
   try {
-    const dishItem = req.user.cart.find(
-      (item) => item.dish.id.toString() === req.params.dishId
+    // Find the item in the cart
+    const itemInCart = req.user.cart.find(
+      (item) => item._id.toString() === req.params.itemId
     );
-    const changedQuantity = req.body.changedQuantity || 0;
 
-    if (!dishItem) {
+    if (!itemInCart) {
       return res
         .status(404)
-        .json({ msg: `Dish with id ${req.params.dishId} not found in cart` });
+        .json({ msg: `Item with id ${req.params.itemId} not found in cart` });
     }
 
-    dishItem.quantity += changedQuantity;
+    const changedQuantity = Number(req.body.increment) || 0;
 
-    const cart = req.user.cart;
+    // Ensure the increment is a valid number
+    if (isNaN(changedQuantity)) {
+      return res.status(400).json({ msg: "Invalid increment value" });
+    }
+
+    // Ensure the quantity doesn't go negative
+    if (itemInCart.quantity + changedQuantity < 0) {
+      return res.status(400).json({
+        msg: "Quantity cannot be less than 0",
+      });
+    }
+
+    // remove item if quantity is 0
+    if (itemInCart.quantity + changedQuantity === 0) {
+      req.user.cart = req.user.cart.filter(
+        (item) => item._id.toString() !== req.params.itemId
+      );
+      await req.user.save();
+      await req.user.populate('cart.dish')
+      return res.json({ msg: "Dish removed from cart", cart: req.user.cart });
+    }
+
+    // Update the quantity
+    itemInCart.quantity += changedQuantity;
+
+    // Save the updated user data and populate cart
     await req.user.save();
+    await req.user.populate('cart.dish')
 
-    res.json({ "Dish updated successfully": cart });
-
+    res.json({ msg: "Dish quantity updated successfully", cart: req.user.cart });
   } catch (error) {
-    res.status(500).json({ msg: error });
+    res.status(500).json({ msg: error.message || "An error occurred" });
   }
 };
 
-const deleteDishFromCart = async (req, res) => {
+
+const deleteItemFromCart = async (req, res) => {
     try {
         const updatedCart = req.user.cart.filter(
-            (item) => item.dish.toString() !== req.params.dishId
+            (item) => item._id.toString() !== req.params.itemId
         );
         
         req.user.cart = updatedCart;
         await req.user.save();
+        await req.user.populate('cart.dish')
 
         res.status(200).json({ message: 'Dish deleted successfully', cart: req.user.cart });
     } catch (error) {
@@ -114,8 +141,8 @@ const clearCart = async (req, res) => {
 module.exports = {
   getCart,
   addDishToCart,
-  updateDishInCart,
-  deleteDishFromCart,
+  updateItemQuantityInCart,
+  deleteItemFromCart,
   clearCart,
   clearCart
 };

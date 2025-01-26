@@ -7,12 +7,12 @@ router.use(auth);
 
 router.get('/', cartController.getCart);
 router.post('/', cartController.addDishToCart);
-router.patch('/:dishId', cartController.updateDishInCart);
-router.delete('/:dishId', cartController.deleteDishFromCart);
+router.patch('/:itemId', cartController.updateItemQuantityInCart);
+router.delete('/:itemId', cartController.deleteItemFromCart);
 router.delete('/', cartController.clearCart);
 
 async function auth(req, res, next){
-    const id = '679505337a60fca83347067f'
+    const id = '6793ee024389c9e84d3b0c39'
     req.user = await User.findById(id);
     next();
 }

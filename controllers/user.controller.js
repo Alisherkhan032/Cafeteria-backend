@@ -1,3 +1,4 @@
+const Counter = require('../models/counter.model');
 const User = require('../models/user.model');
 
 const getAllUser = async (req, res)=>{
@@ -103,10 +104,47 @@ const deleteUser = async (req, res)=>{
     }
 }
 
+const deleteDishFromCart = async (req, res) => {
+    try {
+        const updatedCart = req.user.cart.filter(
+            (item) => item.dish.toString() !== req.params.dishId
+        );
+        
+        req.user.cart = updatedCart;
+        await req.user.save();
+
+        res.status(200).json({ message: 'Dish deleted successfully', cart: req.user.cart });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+}
+
+const getCountersByMerchantId = async (req, res) => {
+    try {
+        const counters = await Counter.find({ merchant: req.params.merchantId }).populate('merchant')
+        if (counters.length === 0) {
+            return res.status(404).json({
+                status: 'failed',
+                message: 'No counter found'
+            });
+        }
+        res.json({
+            status: 'success',
+            counters: counters
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     getAllUser,
     addUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    getCountersByMerchantId
 }
