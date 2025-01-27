@@ -121,7 +121,10 @@ const deleteDishFromCart = async (req, res) => {
 
 const getCountersByMerchantId = async (req, res) => {
     try {
-        const counters = await Counter.find({ merchant: req.params.merchantId }).populate('merchant')
+        const counters = await Counter.find({ merchant: req.params.merchantId }).populate({
+            path : 'merchant',
+            select : '-password'
+        })
         if (counters.length === 0) {
             return res.status(404).json({
                 status: 'failed',

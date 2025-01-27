@@ -21,7 +21,7 @@ const createCounter = async (req, res)=>{
 const getCounterById = async (req, res)=>{
     try {
         const counter = await Counter.findById(req.params.id).populate('merchant');
-        res.json({counter});
+        res.json(counter);
     } catch (error) {
         res.status(500).json({msg: error.message});
     }
