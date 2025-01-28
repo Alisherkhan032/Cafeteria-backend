@@ -20,18 +20,18 @@ const dishSchema = new mongoose.Schema({
     },
     description:{
         type: String,
-        required: true
+        // required: true
     },
     image:{
         type: String,
-        required: true
+        // required: true
     },
     inStock:{
         type: Boolean,
         default: true
     },
     category:{
-        type: String,
+        type: String,   
         enum: ['veg', 'non-veg']
     },
     counter : {

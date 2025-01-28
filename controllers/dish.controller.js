@@ -11,11 +11,13 @@ const getDishes = async (req, res) => {
 
 const addNewDish = async (req, res) => {
     try {
-        const dish = new Dish(req.body);
-        await dish.save();
+        console.log(req.body);
+        const dishCreated = new Dish(req.body);
+        const response = await dishCreated.save();
+        console.log('response', response);
         res.status(201).json({ 
             "message": "Dish added successfully",
-            dish
+            dish : dishCreated
          });
     } catch (error) {
         res.status(500).json({ msg: error });

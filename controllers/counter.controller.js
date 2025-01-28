@@ -32,7 +32,7 @@ const updateCounter = async (req, res)=>{
         const counter = await Counter.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true}).populate('merchant');
         res.json({
             "message": "Counter updated successfully",
-            "counter": counter
+            counter:  counter
         });
     } catch (error) {
         res.status(500).json({msg: error.message});

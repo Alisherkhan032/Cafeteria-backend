@@ -5,6 +5,12 @@ const counterSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description :{
+        type: String,
+    },
+    image:{
+        type: String,
+    },
     merchant :[
         {
             type: mongoose.Schema.Types.ObjectId,
