@@ -3,9 +3,18 @@ const Dish = require("../models/Dish.model");
 
 const getCart = async (req, res) => {
   try {
-    await req.user.populate('cart.dish')
-    const cart = req.user.cart;
-    res.json({ cart: cart, user : req.user });
+    await req.user.populate('cart.dish');
+    
+    // Filter out cart items where dish is null
+    const validCartItems = req.user.cart.filter(item => item.dish !== null);
+    
+    // If we found invalid items, update the user's cart
+    if (validCartItems.length !== req.user.cart.length) {
+      req.user.cart = validCartItems;
+      await req.user.save();
+    }
+    
+    res.json({ cart: validCartItems, user: req.user });
   } catch (error) {
     res.status(500).json({ msg: error });
   }

@@ -7,13 +7,13 @@ const cartSchema = new mongoose.Schema({
         required: true,
         validate : {
             validator : async (dishId)=>{
-                const dish = await mongoose.model('Dish').exists({_id: dishId});
+                const dish = await mongoose.model('Dish').exists({_id: dishId, inStock: true});
                 if(!dish){
                     return false;
                 }
                 return true;
             },
-            message : 'Dish not found'
+            message : 'Invalid Cart'
         }
     },
     quantity: {
@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
         type: [cartSchema],
         default: []
     }
-})
+}, {timestamps: true})
 
 const User = mongoose.model('User', userSchema);
 

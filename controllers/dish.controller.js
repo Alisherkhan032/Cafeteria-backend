@@ -11,13 +11,12 @@ const getDishes = async (req, res) => {
 
 const addNewDish = async (req, res) => {
     try {
-        console.log(req.body);
+        // console.log(req.body);
         const dishCreated = new Dish(req.body);
-        const response = await dishCreated.save();
-        console.log('response', response);
+        const responseObj = await dishCreated.save();
         res.status(201).json({ 
             "message": "Dish added successfully",
-            dish : dishCreated
+            dish : responseObj
          });
     } catch (error) {
         res.status(500).json({ msg: error });
@@ -69,9 +68,9 @@ const deleteDish = async (req, res) => {
 const getDishesByCounterId = async (req, res) => {
     try {
         const dishes = await Dish.find({ counter: req.params.counterId }).populate('counter');
-        if(dishes.length === 0){
-            return res.status(404).json({ msg: `Dishes with counter id ${req.params.counterId} not found` });
-        }
+        // if(dishes.length === 0){
+        //     return res.status(404).json({ msg: `Dishes with counter id ${req.params.counterId} not found` });
+        // }
         res.status(200).json({ dishes });
     } catch (error) {
         res.status(500).json({ msg: error });
