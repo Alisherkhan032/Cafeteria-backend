@@ -7,7 +7,7 @@ const cartSchema = new mongoose.Schema({
         required: true,
         validate : {
             validator : async (dishId)=>{
-                const dish = await mongoose.model('Dish').exists({_id: dishId, inStock: true});
+                const dish = await mongoose.model('Dish').exists({_id: dishId});
                 if(!dish){
                     return false;
                 }
