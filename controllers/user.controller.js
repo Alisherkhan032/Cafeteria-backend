@@ -89,19 +89,20 @@ const updateUser = async (req, res) => {
 
     // If the role is being changed from "merchant" to something else
     if (user.role === "merchant" && role !== "merchant") {
-      // Check how many merchants exist for the same counter
-      const merchantCount = await User.countDocuments({ 
-        counter: user.counter, 
-        role: "merchant" 
-      });
+      // finding counters where the user is the merchant
+      const counters = await Counter.find({ merchant: req.params.id });
 
-      // If the user is the only merchant for that counter, prevent role change
-      if (merchantCount === 1) {
+      // find if any conters has only one merchant
+      const merchantCount = counters.filter(counter => counter.merchant.length === 1).length;
+
+       // If the user is the only merchant for that counter, prevent role change
+      if(merchantCount === 1) {
         return res.status(400).json({
           status: "error",
           message: "Cannot change role. This user is the only merchant for this counter.",
         });
       }
+
     }
 
     // Proceed with updating the user
