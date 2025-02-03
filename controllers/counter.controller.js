@@ -15,6 +15,10 @@ const getAllCounters = async (req, res)=>{
 const createCounter = async (req, res)=>{
     try {
         const counter = await Counter.create(req.body);
+        await counter.populate({
+            path : "merchant",
+            select : "-password -cart"
+        })
         res.json({counter});
     } catch (error) {
         res.status(500).json({msg: error.message});
