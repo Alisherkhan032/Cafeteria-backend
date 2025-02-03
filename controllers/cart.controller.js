@@ -4,7 +4,7 @@ const Dish = require("../models/Dish.model");
 const getCart = async (req, res) => {  // also fetch user details
   // console.log('get cart');
   try {
-    // await req.user.populate('cart.dish');
+    await req.user.populate('cart.dish');
 
     // Filter out cart items where dish is null
     const validCartItems = req.user.cart.filter(item => item.dish !== null);
