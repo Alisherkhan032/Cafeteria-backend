@@ -11,15 +11,18 @@ const getDishes = async (req, res) => {
 
 const addNewDish = async (req, res) => {
     try {
-        // console.log(req.body);
+        console.log('dish body', req.body);
         const dishCreated = new Dish(req.body);
+        console.log('dishCreated', dishCreated);
         const responseObj = await dishCreated.save();
+        console.log('responseObj of created dish', responseObj);
         res.status(201).json({ 
             "message": "Dish added successfully",
             dish : responseObj
          });
     } catch (error) {
-        res.status(500).json({ msg: error });
+        console.error("Error while saving dish:", error);
+        res.status(500).json({ msg: error.message || "Internal Server Error" });
     }
 }
 
